@@ -41,7 +41,7 @@
   <script src="lending_curators.data.js?v=20260611190000"></script>
   <script src="goldfish.data.js?v=20260611200000"></script>
   <script type="text/babel" src="charts.jsx"></script>
-  <script type="text/babel" src="widgets.jsx"></script>
+  <script type="text/babel" src="widgets.jsx?v=snapshot-badge-1"></script>
 
   <script type="text/babel" data-presets="env,react">
     const { useState, useMemo } = React;
@@ -356,7 +356,7 @@
           </Sec>
 
           <div style={{ marginTop: 16 }}>
-            <DataSourceBadge source="Morpho · Euler (Goldsky) · DefiLlama · CoinGecko · Dune" lastUpdated={D.meta.generated} tone="green" />
+            <DataSourceBadge source={`Snapshot · as of ${D.meta.generated.slice(0,10)} · Morpho · Euler (Goldsky) · DefiLlama · CoinGecko · Dune`} tone="yellow" />
           </div>
         </section>
       );

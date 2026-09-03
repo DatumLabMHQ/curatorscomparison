@@ -408,7 +408,7 @@ function DataSourceBadge({ source, lastUpdated, cached, tone = 'green' }) {
         width: 6, height: 6, borderRadius: '50%',
         background: s.fg, boxShadow: `0 0 0 2px ${s.bg}`,
       }} />
-      {source} · {ageLabel}
+      {source}{lastUpdated ? ` · ${ageLabel}` : ''}
     </span>
   );
 }
