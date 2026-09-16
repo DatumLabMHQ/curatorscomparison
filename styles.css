@@ -28,6 +28,7 @@
 
   --orange:   #FF6B35;
   --orange-soft: rgba(255, 107, 53, 0.1);
+  --brand-blue: #4A6CF7;   /* Datum mark blue — used for the wordmark so the logo lockup is consistent */
   --green:    #0F9D58;
   --green-soft: rgba(15, 157, 88, 0.12);
   --red:      #D6322E;
@@ -280,21 +281,20 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .caps { text-transform: uppercase; letter-spacing: 0.1em; }
 
 /* ─── Loading splash (branded; paints before React mounts AND on navigation) ───
-   Single centered, self-looping Datum brand mark on a full-bleed navy backdrop
-   (Sentora-style), replacing the old skeleton scaffold. The backdrop gradient
-   matches the navy baked into datum-loop.webp (#0C143E → #04083C) so there is no
-   visible rectangle seam around the mark. Theme-independent by design: the loader
-   is a deliberate branded moment, identical in light and dark.
+   Single centered Datum brand mark on a full-bleed backdrop (Sentora-style),
+   replacing the old skeleton scaffold. The backdrop is a SOLID matched to the tile
+   background baked into datum-mark.png (#4A6CF7) so there is no visible rectangle
+   seam around the mark. Theme-independent by design: the loader is a deliberate
+   branded moment, identical in light and dark.
    Appears instantly, removed the moment content is ready (React replaces #root /
    the next page paints) — no artificial minimum display time. */
 .boot-splash {
   position: fixed; inset: 0; z-index: 9999;
   display: grid; place-items: center;
-  /* SOLID fill matched to the navy baked into datum-loop.webp (sampled mean of
-     its corners, #0C143E↔#04083C ≈ #080E3D). A solid — not a gradient — so the
-     backdrop colour equals the asset's own background everywhere the centred mark
-     sits, leaving no visible rectangle seam around it. */
-  background: #080E3D;
+  /* SOLID fill matched to the tile background baked into datum-mark.png (#4A6CF7).
+     A solid — not a gradient — so the backdrop colour equals the asset's own
+     background everywhere the centred mark sits, leaving no visible rectangle seam. */
+  background: #4A6CF7;
   animation: bootFade 0.18s ease-out;
 }
 .boot-splash-mark {
@@ -482,6 +482,26 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 }
 .page-subtitle .ok { color: var(--green); }
 
+/* ─── rwa.xyz-style hero (overview) ─── */
+.hero { margin-bottom: 26px; }
+.hero-title { font-size: 30px; margin: 0 0 10px; }
+.page-welcome {
+  font-family: var(--font-sans); font-size: 14px; line-height: 1.62;
+  color: var(--fg-muted); max-width: 760px; margin: 0 0 22px;
+}
+.hero-metrics {
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 28px;
+  padding: 22px 0;
+  border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+}
+.hero-metric { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.hero-metric .metric-value { font-size: 30px; }
+.hero-metric .metric-footer { margin-top: 1px; }
+.hero-status { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+.hero-asof { font-family: var(--font-mono); font-size: 11px; color: var(--fg-dim); margin-left: auto; }
+@media (max-width: 1180px) { .hero-metrics { grid-template-columns: repeat(3, 1fr); row-gap: 24px; } }
+@media (max-width: 680px) { .hero-metrics { grid-template-columns: repeat(2, 1fr); gap: 18px; } .hero-title { font-size: 24px; } .hero-asof { margin-left: 0; } }
+
 /* Time range buttons */
 .time-range {
   display: inline-flex; align-items: center; gap: 2px;
@@ -554,7 +574,7 @@ body[data-aesthetic="evolved"] .panel-header { background: transparent; }
 .panel-body.flush { padding: 0; }
 
 /* ─── Panel caption ─── one-line "what this is and why it matters" under a panel
-   header. Lets a terminal spell out its thesis at the point of each chart/table. */
+   header. Spells out the terminal's thesis at the point of each chart/table. */
 .panel-caption {
   padding: 9px 16px;
   font-family: var(--font-sans);
@@ -1261,13 +1281,13 @@ body[data-theme="dark"] .icon-btn:hover { background: rgba(255,255,255,0.06); }
   .cmdk-trigger { min-width: 0; flex: 1 1 auto; }
   .cmdk-trigger > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .live-pill { display: none; }          /* reclaim horizontal space */
-  .datasource-badge { display: none !important; }   /* verbose source/freshness pill (nowrap, ~246px) shoves the theme toggle off-screen; !important beats the widget's inline display */
+  .datasource-badge { display: none !important; }   /* verbose source/freshness pill (nowrap, ~246px) pushed the theme toggle off-screen; !important beats the widget's inline display */
 
   /* Belt-and-braces: never let the page itself scroll sideways. Wide tables still
      scroll inside their own .panel-body; this only clips stray fixed/overlay chrome. */
   html, body { overflow-x: hidden; max-width: 100%; }
-  /* A closed chart-modal overlay (opacity:0 but still laid out) is display:grid, so its
-     min-content width can spill past the viewport — clamp + clip it. */
+  /* Closed chart-modal overlay (opacity:0 but still laid out) is display:grid, so its
+     min-content width spilled past the viewport — clamp + clip it. */
   .chart-modal-backdrop { min-width: 0; max-width: 100vw; overflow: hidden; }
 
   .main {
@@ -1284,7 +1304,7 @@ body[data-theme="dark"] .icon-btn:hover { background: rgba(255,255,255,0.06); }
     -webkit-overflow-scrolling: touch;
     border-right: none; border-top: 1px solid var(--border);
     background: var(--surface); z-index: 60;
-    /* flex min-width:auto would size the bar to its content (the nav items),
+    /* flex min-width:auto would size the bar to its content (the 6 nav items ≈ 418px),
        breaking the left/right:0 clamp and forcing the whole PAGE to scroll sideways.
        Pin to 0 so the bar stays viewport-width and scrolls its items internally. */
     min-width: 0; max-width: 100vw;

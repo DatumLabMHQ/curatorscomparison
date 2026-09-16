@@ -1,4 +1,4 @@
-// Chart primitives — tiny SVG components, no external deps.
+// Chart primitives, tiny SVG components, no external deps.
 // Usage: pass series, width, height. Interactivity via inline handlers.
 
 const { useState, useRef, useMemo, useEffect, useCallback } = React;
@@ -417,7 +417,7 @@ function Heatmap({ data }) {
           <React.Fragment key={d}>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--fg-muted)' }}>{days[d]}</div>
             {row.map((v, h) => (
-              <div key={h} title={`${days[d]} ${h}:00 — ${Math.round(v*100)}% activity`}
+              <div key={h} title={`${days[d]} ${h}:00, ${Math.round(v*100)}% activity`}
                 style={{
                   aspectRatio: '1 / 1',
                   background: `rgba(255,107,53,${0.08 + v * 0.9})`,
