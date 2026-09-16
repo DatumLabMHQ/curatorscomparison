@@ -118,13 +118,13 @@ function ChartToolbar({ chains, activeChains, setActiveChains, metrics, metric, 
 // runtime:
 //
 //   - If `htmlToImage` is loaded on `window` (added via the CDN script
-//     tag in starter.html / page templates), use its `toPng()` — handles
+//     tag in starter.html / page templates), use its `toPng()`, handles
 //     all DOM nodes, fonts, gradients, transforms reliably.
 //   - Otherwise fall back to the original canvas + SVG-serialize
 //     approach. Works for SVG-only charts but flakey for complex DOM.
 //
 // The `data-snapshot-skip` attribute on any descendant element skips it
-// during capture — useful for keeping action buttons (Snap, Expand) out
+// during capture, useful for keeping action buttons (Snap, Expand) out
 // of the exported image.
 async function snapshotPanel(panelEl, filename = 'chart.png') {
   // Background-color helper: read the active theme's --card so the
@@ -159,7 +159,7 @@ async function snapshotPanel(panelEl, filename = 'chart.png') {
   }
 
   // ── Fallback: canvas + SVG-serialize ──
-  // Same approach as before — works for inline-SVG charts only. Kept
+  // Same approach as before, works for inline-SVG charts only. Kept
   // so the SDK still has a usable snapshot if html-to-image isn't loaded.
   try {
     const rect = panelEl.getBoundingClientRect();
@@ -173,7 +173,7 @@ async function snapshotPanel(panelEl, filename = 'chart.png') {
     ctx.fillRect(0, 0, rect.width, rect.height);
     ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--fg').trim() || '#111';
     ctx.font = '600 14px "IBM Plex Sans", sans-serif';
-    ctx.fillText('datumlabs — chart snapshot', 20, 26);
+    ctx.fillText('datumlabs, chart snapshot', 20, 26);
     ctx.font = '11px "JetBrains Mono", monospace';
     ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--fg-muted').trim() || '#666';
     ctx.fillText(new Date().toISOString(), 20, 44);
@@ -273,7 +273,7 @@ function ExpandModal({ open, title, onClose, children }) {
 //
 // Backported from the centrifuge-rwa-dashboard. Renders a panel-shaped
 // placeholder while data loads. The optional `description` prop lets
-// the loading state explain WHAT'S happening — useful for slow operations
+// the loading state explain WHAT'S happening, useful for slow operations
 // where a generic skeleton undersells the work (e.g. an on-chain scan
 // that takes 5-10 seconds).
 //
@@ -318,9 +318,9 @@ function PanelSkeleton({ label = 'Loading', description, height = 280 }) {
 // Backported from centrifuge. A small status pill that surfaces data
 // reconciliation health. Three levels:
 //   ok       → "VERIFIED" (green)
-//   degraded → "DEGRADED" (yellow/orange) — partial data, e.g. some chain
+//   degraded → "DEGRADED" (yellow/orange), partial data, e.g. some chain
 //              RPCs failed but the rest agreed
-//   broken   → "BROKEN" (red)   — divergence beyond threshold
+//   broken   → "BROKEN" (red)  , divergence beyond threshold
 //
 // Pass `tooltip` for detailed hover text. Pass `label` to override the
 // default text per level.
@@ -380,7 +380,7 @@ function DataSourceBadge({ source, lastUpdated, cached, tone = 'green' }) {
     return () => clearInterval(id);
   }, [lastUpdated]);
   const ageLabel = (() => {
-    if (!lastUpdated) return '—';
+    if (!lastUpdated) return 'n/a';
     const ageMin = Math.max(0, Math.round((Date.now() - lastUpdated) / 60000));
     if (ageMin < 1) return 'just now';
     if (ageMin < 60) return `${ageMin}m ago`;
@@ -408,7 +408,7 @@ function DataSourceBadge({ source, lastUpdated, cached, tone = 'green' }) {
         width: 6, height: 6, borderRadius: '50%',
         background: s.fg, boxShadow: `0 0 0 2px ${s.bg}`,
       }} />
-      {source}{lastUpdated ? ` · ${ageLabel}` : ''}
+      {source} · {ageLabel}
     </span>
   );
 }
@@ -549,7 +549,7 @@ function EmailGate({ dashboardName, features, onUnlock }) {
           <div className="gate-eyebrow">Free access</div>
           <h2 className="gate-title">Unlock the terminal.</h2>
           <p className="gate-sub">
-            Join the weekly DatumLabs brief — we'll send you new dashboards, protocol research,
+            Join the weekly DatumLabs brief, we'll send you new dashboards, protocol research,
             and on-chain signals. No spam, unsubscribe in one click.
           </p>
 
@@ -617,7 +617,24 @@ Object.assign(window, {
   PanelSkeleton, DataQualityBadge, DataSourceBadge,
 });
 
-// Branded navigation splash — the single canonical transition state.
+// Theme toggle: light / dark segmented control. Writes localStorage('theme')
+// so the pre-paint script on every page restores the choice on the next load.
+function ThemeToggle() {
+  const [theme, setTheme] = React.useState(document.body.getAttribute('data-theme') || 'light');
+  const set = (t) => { document.body.setAttribute('data-theme', t); try { localStorage.setItem('theme', t); } catch (e) {} setTheme(t); };
+  return (
+    <div className="theme-toggle" role="tablist" aria-label="Theme">
+      <button className={theme === 'light' ? 'active' : ''} onClick={() => set('light')} title="Light">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      </button>
+      <button className={theme === 'dark' ? 'active' : ''} onClick={() => set('dark')} title="Dark">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+  );
+}
+
+// Branded navigation splash, the single canonical transition state.
 // Injects the same centered looping Datum mark that the static .boot-splash
 // paints on cold boot, so cold-boot and click-to-navigate look identical.
 // Called before window.location.href = ... ; it lives until the next page paints
@@ -628,7 +645,7 @@ function showNavSplash() {
   splash.className = 'boot-splash';
   const mark = document.createElement('img');
   mark.className = 'boot-splash-mark';
-  mark.src = 'assets/brand/datum-loop.webp';
+  mark.src = 'assets/brand/datum-mark.png';
   mark.alt = 'Datum Labs';
   splash.appendChild(mark);
   document.body.appendChild(splash);
